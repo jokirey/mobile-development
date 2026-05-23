@@ -1,8 +1,6 @@
 import 'arguments.dart';
 import 'dart:async';
-
 import 'package:command_runner/command_runner.dart';
-
 import 'console.dart';
 import 'exceptions.dart';
 
@@ -31,6 +29,24 @@ class HelpCommand extends Command {
           "When a command is passed as an argument, prints only that command's verbose usage.",
     );
   }
+
+  String _renderCommandVerbose(Command cmd) {
+    final indent = ' ' * 10;
+    final buffer = StringBuffer();
+    buffer.writeln(cmd.usage.instructionText); //abbr, name: description
+    buffer.writeln('$indent ${cmd.help}');
+    if (cmd.valueHelp != null) {
+      buffer.writeln(
+        '$indent [Argument] Required? ${cmd.requiresArgument}, Type: ${cmd.valueHelp}, Default: ${cmd.defaultValue ?? 'none'}',
+      );
+    }
+    buffer.writeln('$indent Options:');
+    for (var option in cmd.options) {
+      buffer.writeln('$indent ${option.usage}');
+    }
+    return buffer.toString();
+  }
+
   @override
   String get name => 'help';
 
@@ -76,23 +92,5 @@ class HelpCommand extends Command {
 
     return buffer.toString();
   }
-
-  String _renderCommandVerbose(Command cmd) {
-    final indent = ' ' * 10;
-    final buffer = StringBuffer();
-    buffer.writeln(cmd.usage.instructionText); //abbr, name: description
-    buffer.writeln('$indent ${cmd.help}');
-    if (cmd.valueHelp != null) {
-      buffer.writeln(
-        '$indent [Argument] Required? ${cmd.requiresArgument}, Type: ${cmd.valueHelp}, Default: ${cmd.defaultValue ?? 'none'}',
-      );
-    }
-    buffer.writeln('$indent Options:');
-    for (var option in cmd.options) {
-      buffer.writeln('$indent ${option.usage}');
-    }
-    return buffer.toString();
-  }
-
 
 }
